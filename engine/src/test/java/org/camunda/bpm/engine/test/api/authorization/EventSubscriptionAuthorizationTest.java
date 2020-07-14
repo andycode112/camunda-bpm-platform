@@ -27,7 +27,6 @@ import static org.junit.Assert.assertNotNull;
 import org.camunda.bpm.engine.impl.AbstractQuery;
 import org.camunda.bpm.engine.runtime.EventSubscription;
 import org.camunda.bpm.engine.runtime.EventSubscriptionQuery;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

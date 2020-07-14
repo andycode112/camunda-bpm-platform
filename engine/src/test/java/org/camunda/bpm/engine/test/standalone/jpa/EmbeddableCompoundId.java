@@ -17,6 +17,7 @@
 package org.camunda.bpm.engine.test.standalone.jpa;
 
 import javax.persistence.Embeddable;
+
 import java.io.Serializable;
 
 /**

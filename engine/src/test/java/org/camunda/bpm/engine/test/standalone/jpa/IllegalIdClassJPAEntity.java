@@ -18,6 +18,7 @@ package org.camunda.bpm.engine.test.standalone.jpa;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
 import java.util.Calendar;
 
 /**

@@ -23,6 +23,9 @@ import static org.camunda.bpm.engine.task.Event.ACTION_DELETE_ATTACHMENT;
 import static org.camunda.bpm.engine.task.Event.ACTION_DELETE_GROUP_LINK;
 import static org.camunda.bpm.engine.task.Event.ACTION_DELETE_USER_LINK;
 import static org.camunda.bpm.engine.task.IdentityLinkType.CANDIDATE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -38,14 +41,6 @@ import org.camunda.bpm.engine.test.history.useroperationlog.AbstractUserOperatio
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Daniel Meyer

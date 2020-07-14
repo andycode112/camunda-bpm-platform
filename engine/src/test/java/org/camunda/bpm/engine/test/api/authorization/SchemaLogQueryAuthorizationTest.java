@@ -23,7 +23,6 @@ import static org.junit.Assert.assertThat;
 import java.util.Collections;
 
 import org.camunda.bpm.engine.authorization.Groups;
-import org.junit.After;
 import org.junit.Test;
 
 /**
