@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 public class CompetingTransactionsOptimisticLockingTestWithoutBatchProcessing {
 
   private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
-  static ControllableThread activeThread;
+  protected static ControllableThread activeThread;
 
   @Rule
   public ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(

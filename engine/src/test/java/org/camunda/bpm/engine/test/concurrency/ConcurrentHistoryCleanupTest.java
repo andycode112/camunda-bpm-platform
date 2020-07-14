@@ -16,6 +16,11 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeTrue;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -30,15 +35,6 @@ import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.util.DatabaseHelper;
 import org.junit.After;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * <p>Tests the call to history cleanup simultaneously.</p>
@@ -48,22 +44,20 @@ import static org.junit.Assume.assumeTrue;
  *
  * @author Svetlana Dorokhova
  */
-public class ConcurrentHistoryCleanupTest extends ConcurrencyTest {
+public class ConcurrentHistoryCleanupTest extends ConcurrencyTestCase {
 
   @After
   public void tearDown() throws Exception {
-    ((ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration()).getCommandExecutorTxRequired().execute(new Command<Void>() {
-      public Void execute(CommandContext commandContext) {
+    processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
 
-        List<Job> jobs = processEngine.getManagementService().createJobQuery().list();
-        if (jobs.size() > 0) {
-          String jobId = jobs.get(0).getId();
-          commandContext.getJobManager().deleteJob((JobEntity) jobs.get(0));
-          commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobId);
-        }
-
-        return null;
+      List<Job> jobs = processEngine.getManagementService().createJobQuery().list();
+      if (jobs.size() > 0) {
+        String jobId = jobs.get(0).getId();
+        commandContext.getJobManager().deleteJob((JobEntity) jobs.get(0));
+        commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobId);
       }
+
+      return null;
     });
 
   }

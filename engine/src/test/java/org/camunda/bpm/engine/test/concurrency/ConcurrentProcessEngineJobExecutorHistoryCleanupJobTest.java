@@ -17,6 +17,9 @@
 package org.camunda.bpm.engine.test.concurrency;
 
 import static org.camunda.bpm.engine.ProcessEngineConfiguration.HISTORY_CLEANUP_STRATEGY_END_TIME_BASED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -37,14 +40,6 @@ import org.camunda.bpm.engine.runtime.Job;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * <p>Tests a concurrent attempt of a bootstrapping Process Engine to reconfigure
@@ -52,7 +47,7 @@ import static org.junit.Assert.fail;
  *
  * @author Nikola Koevski
  */
-public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends ConcurrencyTest {
+public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends ConcurrencyTestCase {
 
   private static final String PROCESS_ENGINE_NAME = "historyCleanupJobEngine";
 
@@ -93,19 +88,17 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
 
   @After
   public void tearDown() throws Exception {
-    ((ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration()).getCommandExecutorTxRequired().execute(new Command<Void>() {
-      public Void execute(CommandContext commandContext) {
+    processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
 
-        List<Job> jobs = processEngine.getManagementService().createJobQuery().list();
-        if (jobs.size() > 0) {
-          assertEquals(1, jobs.size());
-          String jobId = jobs.get(0).getId();
-          commandContext.getJobManager().deleteJob((JobEntity) jobs.get(0));
-          commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobId);
-        }
-
-        return null;
+      List<Job> jobs = processEngine.getManagementService().createJobQuery().list();
+      if (jobs.size() > 0) {
+        assertEquals(1, jobs.size());
+        String jobId = jobs.get(0).getId();
+        commandContext.getJobManager().deleteJob((JobEntity) jobs.get(0));
+        commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobId);
       }
+
+      return null;
     });
     ClockUtil.setCurrentTime(new Date());
     closeDownProcessEngine();

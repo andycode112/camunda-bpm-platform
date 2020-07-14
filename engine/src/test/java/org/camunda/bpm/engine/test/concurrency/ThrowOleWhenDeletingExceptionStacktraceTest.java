@@ -30,29 +30,25 @@ import org.junit.Test;
 /**
  * @author Tassilo Weidner
  */
-public class ThrowOleWhenDeletingExceptionStacktraceTest extends ConcurrencyTest {
+public class ThrowOleWhenDeletingExceptionStacktraceTest extends ConcurrencyTestCase {
 
   protected AtomicReference<JobEntity> job = new AtomicReference<>();
 
   @After
   public void tearDown() throws Exception {
     if (job.get() != null) {
-      processEngineConfiguration.getCommandExecutorTxRequired().execute(new Command<Void>() {
-        public Void execute(CommandContext commandContext) {
-          JobEntity jobEntity = job.get();
+      processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
+        JobEntity jobEntity = job.get();
 
-          jobEntity.setRevision(2);
+        jobEntity.setRevision(2);
 
-          commandContext.getJobManager().deleteJob(jobEntity);
-          commandContext.getByteArrayManager().deleteByteArrayById(jobEntity.getExceptionByteArrayId());
-          commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobEntity.getId());
+        commandContext.getJobManager().deleteJob(jobEntity);
+        commandContext.getByteArrayManager().deleteByteArrayById(jobEntity.getExceptionByteArrayId());
+        commandContext.getHistoricJobLogManager().deleteHistoricJobLogByJobId(jobEntity.getId());
 
-          return null;
-        }
+        return null;
       });
     }
-
-
   }
 
   @Test

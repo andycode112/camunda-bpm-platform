@@ -16,6 +16,10 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.assertj.core.api.Assumptions.assumeThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.sql.Connection;
 
 import org.camunda.bpm.engine.impl.HistoryLevelSetupCommand;
@@ -28,16 +32,6 @@ import org.camunda.bpm.engine.test.util.DatabaseHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assumptions.assumeThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 /**
  * <p>Tests cluster scenario with two nodes trying to write the history level property in parallel.</p>
  *
@@ -45,7 +39,7 @@ import static org.junit.Assert.fail;
  * exclusive lock on table.</p>
  *
  */
-public class ConcurrentHistoryLevelTest extends ConcurrencyTest {
+public class ConcurrentHistoryLevelTest extends ConcurrencyTestCase {
 
   @Before
   public void setUp() throws Exception {

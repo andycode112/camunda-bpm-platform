@@ -33,11 +33,9 @@ import org.camunda.bpm.engine.impl.db.sql.DbSqlSessionFactory;
 import org.camunda.bpm.engine.impl.test.RequiredDatabase;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
 import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -48,10 +46,10 @@ import org.slf4j.Logger;
  */
 public class CompetingTransactionsOptimisticLockingTest {
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
-  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
-  public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+  private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
+
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule();
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
@@ -60,15 +58,14 @@ public class CompetingTransactionsOptimisticLockingTest {
   protected RuntimeService runtimeService;
   protected TaskService taskService;
 
+  protected static ControllableThread activeThread;
+
   @Before
   public void initializeServices() {
     processEngineConfiguration = engineRule.getProcessEngineConfiguration();
     runtimeService = engineRule.getRuntimeService();
     taskService = engineRule.getTaskService();
   }
-
-  private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
-  static ControllableThread activeThread;
 
   public class TransactionThread extends ControllableThread {
     String taskId;

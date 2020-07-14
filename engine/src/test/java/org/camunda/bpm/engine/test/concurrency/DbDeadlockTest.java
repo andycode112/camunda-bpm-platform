@@ -36,7 +36,7 @@ import org.junit.Test;
  *
  */
 @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_ACTIVITY)
-public class DbDeadlockTest extends ConcurrencyTest {
+public class DbDeadlockTest extends ConcurrencyTestCase {
 
   private ThreadControl thread1;
   private ThreadControl thread2;

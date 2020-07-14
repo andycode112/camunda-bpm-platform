@@ -100,7 +100,7 @@ public class CompetingForkTest {
   @Deployment
   @Ignore
   @Test
-  public void FAILING_testCompetingFork() throws Exception {
+  public void testCompetingFork() throws Exception {
     runtimeService.startProcessInstanceByKey("process");
 
     TaskQuery query = taskService.createTaskQuery();

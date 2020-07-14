@@ -18,11 +18,9 @@ package org.camunda.bpm.engine.test.concurrency;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.camunda.bpm.engine.history.HistoricJobLog;
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.context.Context;
 import org.camunda.bpm.engine.impl.db.entitymanager.DbEntityManager;
 import org.camunda.bpm.engine.impl.db.entitymanager.DbEntityManagerFactory;
@@ -46,7 +44,7 @@ import org.junit.rules.RuleChain;
 /**
  *  @author Philipp Ossler
  */
-public class JdbcStatementTimeoutTest {
+public class JdbcStatementTimeoutTest extends ConcurrencyTestHelper {
 
   private static final int STATEMENT_TIMEOUT_IN_SECONDS = 1;
   // some databases (like mysql and oracle) need more time to cancel the statement
@@ -62,16 +60,12 @@ public class JdbcStatementTimeoutTest {
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
 
-  protected ProcessEngineConfigurationImpl processEngineConfiguration;
-  protected List<ConcurrencyTest.ControllableCommand<?>> controllableCommands;
-
-  private ConcurrencyTest.ThreadControl thread1;
-  private ConcurrencyTest.ThreadControl thread2;
+  private ConcurrencyTestHelper.ThreadControl thread1;
+  private ConcurrencyTestHelper.ThreadControl thread2;
 
   @Before
   public void setUp() {
     processEngineConfiguration = engineRule.getProcessEngineConfiguration();
-    controllableCommands = new ArrayList<>();
   }
 
 
@@ -83,8 +77,8 @@ public class JdbcStatementTimeoutTest {
     }
 
     // wait for all spawned threads to end
-    for (ConcurrencyTest.ControllableCommand<?> controllableCommand : controllableCommands) {
-      ConcurrencyTest.ThreadControl threadControl = controllableCommand.monitor;
+    for (ConcurrencyTestCase.ControllableCommand<?> controllableCommand : controllableCommands) {
+      ConcurrencyTestHelper.ThreadControl threadControl = controllableCommand.monitor;
       threadControl.executingThread.interrupt();
       threadControl.executingThread.join();
     }
@@ -153,29 +147,7 @@ public class JdbcStatementTimeoutTest {
     });
   }
 
-  protected ConcurrencyTest.ThreadControl executeControllableCommand(final ConcurrencyTest.ControllableCommand<?> command) {
-
-    final Thread controlThread = Thread.currentThread();
-
-    Thread thread = new Thread(() -> {
-      try {
-        processEngineConfiguration.getCommandExecutorTxRequiresNew().execute(command);
-      } catch(RuntimeException e) {
-        command.monitor.setException(e);
-        controlThread.interrupt();
-        throw e;
-      }
-    });
-
-    controllableCommands.add(command);
-    command.monitor.executingThread = thread;
-
-    thread.start();
-
-    return command.monitor;
-  }
-
-  static class UpdateJobCommand extends ConcurrencyTest.ControllableCommand<Void> {
+  static class UpdateJobCommand extends ControllableCommand<Void> {
 
     protected String lockOwner;
 

@@ -46,7 +46,7 @@ import org.junit.Test;
  * @author Daniel Meyer
  */
 @RequiredDatabase(excludes = DbSqlSessionFactory.H2)
-public class ConcurrentDeploymentTest extends ConcurrencyTest {
+public class ConcurrentDeploymentTest extends ConcurrencyTestCase {
 
   private static String processResource;
 

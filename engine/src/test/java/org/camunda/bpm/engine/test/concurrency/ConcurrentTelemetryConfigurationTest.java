@@ -38,7 +38,7 @@ import org.junit.Test;
  * exclusive lock on table.</p>
  *
  */
-public class ConcurrentTelemetryConfigurationTest extends ConcurrencyTest {
+public class ConcurrentTelemetryConfigurationTest extends ConcurrencyTestCase {
 
   @Before
   public void setUp() {

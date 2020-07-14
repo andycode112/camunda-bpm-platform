@@ -16,6 +16,11 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,23 +42,14 @@ import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.util.DatabaseHelper;
 import org.junit.After;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Thorben Lindhauer
  *
  */
-public class CompetingMessageCorrelationTest extends ConcurrencyTest {
+public class CompetingMessageCorrelationTest extends ConcurrencyTestCase {
 
   @After
   public void tearDown() throws Exception {
@@ -70,8 +66,6 @@ public class CompetingMessageCorrelationTest extends ConcurrencyTest {
     });
 
     assertEquals(0, processEngine.getHistoryService().createHistoricJobLogQuery().list().size());
-
-
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/concurrency/CompetingMessageCorrelationTest.catchMessageProcess.bpmn20.xml")
@@ -113,7 +107,7 @@ public class CompetingMessageCorrelationTest extends ConcurrencyTest {
     assertTrue(thread2.getException() != null);
     assertTrue(thread2.getException() instanceof ProcessEngineException);
     testRule.assertTextPresent("does not have a subscription to a message event with name 'Message'",
-                               thread2.getException().getMessage());
+        thread2.getException().getMessage());
 
     // the first thread ended successfully without an exception
     thread1.join();

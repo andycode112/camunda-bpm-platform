@@ -27,11 +27,9 @@ import org.camunda.bpm.engine.impl.cmd.SignalCmd;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
 import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -43,10 +41,10 @@ import org.slf4j.Logger;
  */
 public class CompetingJoinTest {
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
-  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
-  public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+  private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
+
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule();
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
@@ -54,17 +52,13 @@ public class CompetingJoinTest {
   protected ProcessEngineConfigurationImpl processEngineConfiguration;
   protected RuntimeService runtimeService;
 
+  protected static ControllableThread activeThread;
+
   @Before
   public void initializeServices() {
     processEngineConfiguration = engineRule.getProcessEngineConfiguration();
     runtimeService = engineRule.getRuntimeService();
   }
-
-private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
-
-  Thread testThread = Thread.currentThread();
-  static ControllableThread activeThread;
-  static String jobId;
 
   public class SignalThread extends ControllableThread {
     String executionId;

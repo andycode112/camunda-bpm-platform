@@ -17,6 +17,7 @@
 package org.camunda.bpm.engine.test.concurrency;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.cmd.SetLicenseKeyCmd;
@@ -25,16 +26,8 @@ import org.camunda.bpm.engine.impl.persistence.entity.ResourceEntity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
-public class CompetingLicenseKeyAccessTest extends ConcurrencyTest {
+public class CompetingLicenseKeyAccessTest extends ConcurrencyTestCase {
 
   private ThreadControl asyncThread;
 

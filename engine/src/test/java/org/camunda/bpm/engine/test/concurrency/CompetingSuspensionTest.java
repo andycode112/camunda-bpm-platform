@@ -31,11 +31,9 @@ import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
 import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -46,12 +44,10 @@ import org.slf4j.Logger;
  */
 public class CompetingSuspensionTest {
 
-  private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
+  protected static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
-  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
-  public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule();
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
@@ -60,6 +56,8 @@ public class CompetingSuspensionTest {
   protected RepositoryService repositoryService;
   protected RuntimeService runtimeService;
 
+  protected static ControllableThread activeThread;
+
 
   @Before
   public void initializeServices() {
@@ -67,8 +65,6 @@ public class CompetingSuspensionTest {
     repositoryService = engineRule.getRepositoryService();
     runtimeService = engineRule.getRuntimeService();
   }
-
-  static ControllableThread activeThread;
 
   class SuspendProcessDefinitionThread extends ControllableThread {
 

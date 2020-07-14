@@ -72,7 +72,7 @@ import org.junit.Test;
  * @author Daniel Meyer
  *
  */
-public class CompetingVariableFetchingAndDeletionTest extends ConcurrencyTest {
+public class CompetingVariableFetchingAndDeletionTest extends ConcurrencyTestCase {
 
   private ThreadControl asyncThread;
 

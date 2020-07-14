@@ -30,11 +30,9 @@ import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.cmd.CompleteTaskCmd;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
 import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -48,10 +46,8 @@ public class CompetingSubprocessCompletionTest {
 
   private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
-  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
-  public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule();
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
@@ -60,6 +56,8 @@ public class CompetingSubprocessCompletionTest {
   protected RuntimeService runtimeService;
   protected TaskService taskService;
 
+  static ControllableThread activeThread;
+
 
   @Before
   public void initializeServices() {
@@ -67,8 +65,6 @@ public class CompetingSubprocessCompletionTest {
     runtimeService = engineRule.getRuntimeService();
     taskService = engineRule.getTaskService();
   }
-
-  static ControllableThread activeThread;
 
   public class CompleteTaskThread extends ControllableThread {
     String taskId;

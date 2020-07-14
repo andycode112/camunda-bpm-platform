@@ -32,9 +32,9 @@ import org.junit.Test;
  * @author Svetlana Dorokhova
  *
  */
-public class CompetingCompleteTaskSetVariableTest extends ConcurrencyTest {
+public class CompetingCompleteTaskSetVariableTest extends ConcurrencyTestCase {
 
-  protected static class ControllableCompleteTaskCommand extends ConcurrencyTest.ControllableCommand<Void> {
+  protected static class ControllableCompleteTaskCommand extends ConcurrencyTestCase.ControllableCommand<Void> {
 
     protected String taskId;
 
@@ -56,7 +56,7 @@ public class CompetingCompleteTaskSetVariableTest extends ConcurrencyTest {
 
   }
 
-  public class ControllableSetTaskVariablesCommand extends ConcurrencyTest.ControllableCommand<Void> {
+  public class ControllableSetTaskVariablesCommand extends ConcurrencyTestCase.ControllableCommand<Void> {
 
     protected String taskId;
 
@@ -87,11 +87,11 @@ public class CompetingCompleteTaskSetVariableTest extends ConcurrencyTest {
 
     final String taskId = taskService.createTaskQuery().singleResult().getId();
 
-    ConcurrencyTest.ThreadControl thread1 = executeControllableCommand(new ControllableSetTaskVariablesCommand(taskId, Variables.createVariables().putValue("var", "value")));
+    ConcurrencyTestHelper.ThreadControl thread1 = executeControllableCommand(new ControllableSetTaskVariablesCommand(taskId, Variables.createVariables().putValue("var", "value")));
     thread1.reportInterrupts();
     thread1.waitForSync();
 
-    ConcurrencyTest.ThreadControl thread2 = executeControllableCommand(new ControllableCompleteTaskCommand(taskId));
+    ConcurrencyTestHelper.ThreadControl thread2 = executeControllableCommand(new ControllableCompleteTaskCommand(taskId));
     thread2.reportInterrupts();
     thread2.waitForSync();
 
