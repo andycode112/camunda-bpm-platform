@@ -16,11 +16,13 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.impl.BootstrapEngineCommand;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
+import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.After;
 import org.junit.Before;
@@ -33,9 +35,12 @@ public class ConcurrentHistoryCleanupReconfigureTest extends ConcurrencyTestHelp
   protected ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(configuration ->
       configuration.setHistoryCleanupBatchWindowStartTime("12:00"));
   protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
-
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+  
   @Rule
-  public RuleChain ruleChain = RuleChain.outerRule(bootstrapRule).around(engineRule);
+  public RuleChain ruleChain = RuleChain.outerRule(bootstrapRule).around(engineRule).around(testRule);
+
+  protected HistoryService historyService;
 
   @Before
   public void initializeProcessEngine() {
@@ -45,7 +50,7 @@ public class ConcurrentHistoryCleanupReconfigureTest extends ConcurrencyTestHelp
 
   @After
   public void tearDown() throws Exception {
-    deleteHistoryCleanupJobs();
+    testRule.deleteHistoryCleanupJobs();
     clearDatabase();
   }
 
@@ -98,7 +103,7 @@ public class ConcurrentHistoryCleanupReconfigureTest extends ConcurrencyTestHelp
   // helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   protected void clearDatabase() {
-    deleteHistoryCleanupJobs();
+    testRule.deleteHistoryCleanupJobs();
 
     processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
 
