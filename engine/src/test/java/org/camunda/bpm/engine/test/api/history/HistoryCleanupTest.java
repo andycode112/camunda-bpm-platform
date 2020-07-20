@@ -129,6 +129,9 @@ public class HistoryCleanupTest {
   protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
   public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
+  @Rule
+  public RuleChain ruleChain = RuleChain.outerRule(bootstrapRule).around(engineRule).around(testRule);
+
   private Random random = new Random();
 
   @Rule
@@ -142,8 +145,6 @@ public class HistoryCleanupTest {
   private IdentityService identityService;
   private ProcessEngineConfigurationImpl processEngineConfiguration;
 
-  @Rule
-  public RuleChain ruleChain = RuleChain.outerRule(bootstrapRule).around(engineRule).around(testRule);
 
   @Before
   public void init() {
