@@ -176,7 +176,11 @@ public abstract class DbSqlSession extends AbstractPersistenceSession {
 
     if (failure != null) {
       operation.setFailure(failure);
-      operation.setState(State.FAILED_ERROR);
+      State failureState = State.FAILED_ERROR;
+      if (isConcurrentModificationException(operation, failure)) {
+        failureState = State.FAILED_CONCURRENT_MODIFICATION;
+      }
+      operation.setState(failureState);
     } else {
       operation.setRowsAffected(rowsAffected);
       operation.setState(State.APPLIED);
@@ -218,8 +222,9 @@ public abstract class DbSqlSession extends AbstractPersistenceSession {
 
     boolean isConstraintViolation = ExceptionUtil.checkForeignKeyConstraintViolation(cause);
     boolean isVariableIntegrityViolation = ExceptionUtil.checkVariableIntegrityViolation(cause);
+    boolean isCrdbTxRetryException = ExceptionUtil.isTransactionRetryException(cause);
 
-    if (isVariableIntegrityViolation) {
+    if (isVariableIntegrityViolation || isCrdbTxRetryException) {
 
       return true;
     } else if (
