@@ -184,7 +184,7 @@ public class TelemetryReporterTest {
     telemetryReporter.reportNow();
 
     // then
-    assertThat(loggingRule.getFilteredLog("Unexpect response while sending telemetry data").size()).isOne();
+    assertThat(loggingRule.getFilteredLog("Unexpected response while sending telemetry data").size()).isOne();
   }
 
   @Test

@@ -888,7 +888,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected String telemetryEndpoint = "https://api.telemetry.camunda.cloud/pings";
   protected TelemetryReporter telemetryReporter;
   /** http client used for sending telemetry */
-  protected HttpConnector telemetryHttp = Connectors.getConnector(HttpConnector.ID);
+  protected HttpConnector telemetryHttp;
   protected Data telemetryData;
 
 
@@ -2578,6 +2578,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
   protected void initTelemetry() {
     if (telemetryData == null) {
       initTelemetryData();
+    }
+    if (telemetryHttp == null) {
+      telemetryHttp = Connectors.getConnector(HttpConnector.ID);
     }
     if (telemetryReporter == null) {
       telemetryReporter = new TelemetryReporter(commandExecutorTxRequired,
