@@ -74,7 +74,8 @@ public class CompetingTransactionsOptimisticLockingTestWithoutBatchProcessing ex
   protected void runTest() throws Throwable {
     String databaseType = DatabaseHelper.getDatabaseType(processEngineConfiguration);
 
-    if (DbSqlSessionFactory.POSTGRES.equals(databaseType)) {
+    if (DbSqlSessionFactory.POSTGRES.equals(databaseType)
+        || DbSqlSessionFactory.CRDB.equals(databaseType)) {
       // skip test method - if database is PostgreSQL
     } else {
       // invoke the test method
